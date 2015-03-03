@@ -33,7 +33,11 @@ LD_PRELOAD=/usr/lib/libdontdie.so DD_DEBUG=1 DD_TCP_KEEPALIVE_TIME=60 \
   href="http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html">good
   descriptions around</a>.
 
-* DD_EVAL_ENVIRONMENT_ONCE: if set to 1 (or not set), all the environment
-  variables are evaluated just once and not during each socket call.
+* DD_EVAL_ENVIRONMENT_ONCE: if set to 1 or if the environment variable
+  is not set, all the environment variables are evaluated just once
+  and not during each socket call.
 
+* DD_USE_KEEPALIVE: if set to 1 or if the environment variable
+  is not set, tcp keepalive will be switched on.  All other values
+  that are not specified are used from the system.
 

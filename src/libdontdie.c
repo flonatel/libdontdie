@@ -5,6 +5,9 @@
 #include <stdlib.h>
 #include <syslog.h>
 #include <dlfcn.h>
+#include <sys/socket.h>
+#include <sys/types.h>
+#include <netinet/tcp.h>
 
 #define LOG(msg...)                                                            \
   do {                                                                         \
@@ -16,12 +19,13 @@
 int (*socket_call_clib)(int domain, int type, int protocol);
 
 int debug = 0;
+int use_keepalive = 1;
 int eval_environment_once = 0;
 int tcp_keepalive_time = -1;
 int tcp_keepalive_intvl = -1;
 int tcp_keepalive_probes = -1;
 
-static eval_environment() {
+static void eval_environment() {
   if (eval_environment_once) {
     return;
   }
@@ -35,9 +39,19 @@ static eval_environment() {
 
   char const *const str_eval_environment_once =
       getenv("DD_EVAL_ENVIRONMENT_ONCE");
-  if (str_eval_environment_once == NULL || *str_eval_environment_once == '1') {
+  if (str_eval_environment_once != NULL && *str_eval_environment_once == '0') {
+    LOG("Evaluate environment for every socket() call");
+  } else {
     eval_environment_once = 1;
     LOG("Evaluate environment only once");
+  }
+
+  char const *const str_use_keepalive = getenv("DD_USE_KEEPALIVE");
+  if (str_use_keepalive != NULL && *str_use_keepalive == '0') {
+    use_keepalive = 0;
+    LOG("TCP keepalive is switched off");
+  } else {
+    LOG("TCP keepalive is switched on");
   }
 
 #define EVAL_ENV(ltype, strtype)                                               \
@@ -58,5 +72,133 @@ static eval_environment() {
 __attribute__((constructor)) void libdontdie_init() {
   eval_environment();
 
-  socket_call_clib = dlsym(RTLD_NEXT, "socket");
+  // Cast it: accoring to the man page this construct must be used:
+  *(void **)(&socket_call_clib) = dlsym(RTLD_NEXT, "socket");
+  if (socket_call_clib == NULL) {
+    LOG("No dynamic symbol with name 'socket' found [%m]");
+    abort();
+  }
+}
+
+static void log_parameter_domain(int const domain) {
+  switch (domain) {
+  case AF_UNIX:
+    LOG("domain [AF_UNIX]");
+    break;
+  case AF_INET:
+    LOG("domain [AF_INET]");
+    break;
+  case AF_INET6:
+    LOG("domain [AF_INET6]");
+    break;
+  case AF_IPX:
+    LOG("domain [AF_IPX]");
+    break;
+  case AF_NETLINK:
+    LOG("domain [AF_NETLINK]");
+    break;
+  case AF_X25:
+    LOG("domain [AF_X25]");
+    break;
+  case AF_AX25:
+    LOG("domain [AF_AX25]");
+    break;
+  case AF_ATMPVC:
+    LOG("domain [AF_ATMPVC]");
+    break;
+  case AF_APPLETALK:
+    LOG("domain [AF_APPLETALK]");
+    break;
+  case AF_PACKET:
+    LOG("domain [AF_PACKET]");
+    break;
+  }
+}
+
+static void log_parameter_type(int const type) {
+  if (type & SOCK_STREAM) {
+    LOG("type [SOCK_STREAM]");
+  }
+  if (type & SOCK_DGRAM) {
+    LOG("type [SOCK_DGRAM]");
+  }
+  if (type & SOCK_SEQPACKET) {
+    LOG("type [SOCK_SEQPACKET]");
+  }
+  if (type & SOCK_RAW) {
+    LOG("type [SOCK_RAW]");
+  }
+  if (type & SOCK_RDM) {
+    LOG("type [SOCK_RDM]");
+  }
+  if (type & SOCK_PACKET) {
+    LOG("type [SOCK_PACKET]");
+  }
+  if (type & SOCK_NONBLOCK) {
+    LOG("type [NONBLOCK]");
+  }
+  if (type & SOCK_CLOEXEC) {
+    LOG("type [CLOEXEC]");
+  }
+}
+
+static void log_parameters(int domain, int type, int protocol) {
+  log_parameter_domain(domain);
+  log_parameter_type(type);
+  LOG("protocol [%d]", protocol);
+}
+
+int socket(int domain, int type, int protocol) {
+  eval_environment();
+  if (debug) {
+    LOG("socket() called");
+    log_parameters(domain, type, protocol);
+  }
+
+  int const socket_fd = (*socket_call_clib)(domain, type, protocol);
+  if (socket_fd == -1) {
+    LOG("Error socket() call [%m]");
+    return socket_fd;
+  }
+  LOG("socket() call returned fd [%d]", socket_fd);
+
+  // Check some parameters
+  if (domain != AF_INET && domain != AF_INET6) {
+    LOG("Ignoring TCP KEEPALIVE on a non INET4/6 socket");
+    return socket_fd;
+  }
+  if ((type & SOCK_STREAM) == 0) {
+    LOG("Ignoring TCP KEEPALIVE on a non stream socket");
+    return socket_fd;
+  }
+
+  LOG("Parameters check passed");
+
+  if (use_keepalive == 0) {
+    LOG("Keepalive switched off by configuration");
+    return socket_fd;
+  }
+
+  LOG("Setting KEEPALIVE for socket");
+
+  int const ssopt_ka = setsockopt(socket_fd, SOL_SOCKET, SO_KEEPALIVE,
+                                  &use_keepalive, sizeof(use_keepalive));
+  if (ssopt_ka == -1) {
+    LOG("Setting KEEPALIVE returned error [%m]");
+    return socket_fd;
+  }
+
+  if (tcp_keepalive_time >= 0) {
+    LOG("Seting keepalive_time [%d]", tcp_keepalive_time);
+    int const ssopt_time =
+        setsockopt(socket_fd, SOL_TCP, TCP_KEEPCNT, &tcp_keepalive_time,
+                   sizeof(tcp_keepalive_time));
+    if (ssopt_time == -1) {
+      LOG("Setting TCP_KEEPTIME returned error [%m]");
+    }
+  }
+
+  LOG("Finished; returning to caller [%d]", socket_fd);
+
+  return socket_fd;
 }
