@@ -17,9 +17,7 @@ strange license, I started over.
 ## Usage
 
 ```bash
-LD_PRELOAD=/usr/lib/libdontdie.so DD_DEBUG=1 DD_TCP_KEEPALIVE_TIME=60 \
-   DD_TCP_KEEPALIVE_INTVL=30 DD_TCP_KEEPALIVE_PROBES=45 \
-   java EchoClient
+DD_DEBUG=1 DD_TCP_KEEPALIVE_TIME=4 DD_TCP_KEEPALIVE_INTVL=5 DD_TCP_KEEPALIVE_PROBES=6 LD_PRELOAD=/usr/lib/libdontdie.so java EchoClient 127.0.0.1 22
 ```
 
 * DD_DEBUG: if set to 1, it print each call of socket - including the
@@ -51,7 +49,7 @@ javac EchoClient.java
 This connects to localhost port 22:
 
 ```bash
-DD_DEBUG=1 DD_TCP_KEEPALIVE_TIME=4 DD_TCP_KEEPALIVE_INTVL=5 DD_TCP_KEEPALIVE_PROBES=6 LD_PRELOAD=/home/florath/devel/libdontdie/src/libdontdie.so java EchoClient 127.0.0.1 22
+DD_DEBUG=1 DD_TCP_KEEPALIVE_TIME=4 DD_TCP_KEEPALIVE_INTVL=5 DD_TCP_KEEPALIVE_PROBES=6 LD_PRELOAD=/usr/lib/libdontdie.so java EchoClient 127.0.0.1 22
 ```
 
 Log output:
