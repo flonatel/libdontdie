@@ -188,15 +188,22 @@ int socket(int domain, int type, int protocol) {
     return socket_fd;
   }
 
-  if (tcp_keepalive_time >= 0) {
-    LOG("Seting keepalive_time [%d]", tcp_keepalive_time);
-    int const ssopt_time =
-        setsockopt(socket_fd, SOL_TCP, TCP_KEEPCNT, &tcp_keepalive_time,
-                   sizeof(tcp_keepalive_time));
-    if (ssopt_time == -1) {
-      LOG("Setting TCP_KEEPTIME returned error [%m]");
-    }
+#define SET_SOCK_OPT(ltype, strtype, tcp_type)                                 \
+  if (tcp_keepalive_##ltype >= 0) {                                            \
+    LOG("Seting " strtype " [%d]", tcp_keepalive_##ltype);                     \
+    int const ssopt =                                                          \
+        setsockopt(socket_fd, SOL_TCP, tcp_type, &tcp_keepalive_##ltype,       \
+                   sizeof(tcp_keepalive_##ltype));                             \
+    if (ssopt == -1) {                                                         \
+      LOG("Setting " strtype " returned error [%m]");                          \
+    }                                                                          \
   }
+
+  SET_SOCK_OPT(time, "TIME", TCP_KEEPIDLE);
+  SET_SOCK_OPT(intvl, "INTVL", TCP_KEEPINTVL);
+  SET_SOCK_OPT(probes, "PROBES", TCP_KEEPCNT);
+
+#undef SET_SOCK_OPT
 
   LOG("Finished; returning to caller [%d]", socket_fd);
 
