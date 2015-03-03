@@ -22,7 +22,7 @@ LD_PRELOAD=/usr/lib/libdontdie.so DD_DEBUG=1 DD_TCP_KEEPALIVE_TIME=60 \
    java EchoServer
 ```
 
-* DD_DEBUG: if set, it print each call of socket - including the
+* DD_DEBUG: if set to 1, it print each call of socket - including the
   provided parameters to syslog.  Also logged are the decisions if the
   keep alive should be set and which parameters are used.
 
@@ -32,4 +32,8 @@ LD_PRELOAD=/usr/lib/libdontdie.so DD_DEBUG=1 DD_TCP_KEEPALIVE_TIME=60 \
   <a
   href="http://tldp.org/HOWTO/TCP-Keepalive-HOWTO/usingkeepalive.html">good
   descriptions around</a>.
+
+* DD_EVAL_ENVIRONMENT_ONCE: if set to 1 (or not set), all the environment
+  variables are evaluated just once and not during each socket call.
+
 
