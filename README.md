@@ -5,8 +5,8 @@ TCP lib that sets KEEP ALIVE parameters when socket(3) is called
 This is a complete rewrite of the <a
 href="http://libkeepalive.sourceforge.net">libkeepalive</a>.
 
-The main reason for the rewrite was the license (GPL - without
-exceptions) which is always something clowdy for a library.
+The main reason for the rewrite was the license of libkeepalive (GPL -
+without exceptions) which is always something clowdy for a library.
 
 The other reason was, that the libkeepalive does not work with Java -
 because of a bug.
@@ -20,7 +20,7 @@ strange license, I started over.
 DD_DEBUG=1 DD_TCP_KEEPALIVE_TIME=4 DD_TCP_KEEPALIVE_INTVL=5 DD_TCP_KEEPALIVE_PROBES=6 LD_PRELOAD=/usr/lib/libdontdie.so java EchoClient 127.0.0.1 22
 ```
 
-* DD_DEBUG: if set to 1, it print each call of socket - including the
+* DD_DEBUG: if set to 1, it prints each call of socket - including the
   provided parameters to syslog.  Also logged are the decisions if the
   keep alive should be set and which parameters are used.
 
@@ -40,7 +40,7 @@ DD_DEBUG=1 DD_TCP_KEEPALIVE_TIME=4 DD_TCP_KEEPALIVE_INTVL=5 DD_TCP_KEEPALIVE_PRO
   that are not specified are used from the system.
 
 ## Example
-In the java directory there is a simple echo client.  To compile it do
+In the java directory there is a simple echo client.  To compile it run
 
 ```bash
 javac EchoClient.java

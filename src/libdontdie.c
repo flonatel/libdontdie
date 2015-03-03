@@ -59,7 +59,7 @@ static void eval_environment() {
       getenv("DD_TCP_KEEPALIVE_" strtype);                                     \
   if (str_tcp_keepalive_##ltype != NULL) {                                     \
     tcp_keepalive_##ltype = atoi(str_tcp_keepalive_##ltype);                   \
-    LOG("Set TCP_KEEPALIVE_" strtype "= [%d]", tcp_keepalive_##ltype);         \
+    LOG("set TCP_KEEPALIVE_" strtype " [%d]", tcp_keepalive_##ltype);         \
   }
 
   EVAL_ENV(time, "TIME");
