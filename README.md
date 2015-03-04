@@ -1,6 +1,9 @@
 # libdontdie
 TCP lib that sets KEEP ALIVE parameters when socket(3) is called
 
+[![Build
+Status](https://secure.travis-ci.org/flonatel/libdontdie.png)](http://travis-ci.org/flonatel/pipexec)
+
 ## Introduction
 This is a complete rewrite of the <a
 href="http://libkeepalive.sourceforge.net">libkeepalive</a>.
