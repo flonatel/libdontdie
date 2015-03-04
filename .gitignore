@@ -2,3 +2,5 @@
 test/java/EchoClient.class
 test/Cperformance/perf
 libdontdie.so
+debian/libdontdie
+debian/source
