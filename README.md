@@ -53,61 +53,75 @@ javac EchoClient.java
 This connects to localhost port 22:
 
 ```bash
-DD_DEBUG=1 DD_TCP_KEEPALIVE_TIME=4 DD_TCP_KEEPALIVE_INTVL=5 DD_TCP_KEEPALIVE_PROBES=6 LD_PRELOAD=/usr/lib/libdontdie.so java EchoClient 127.0.0.1 22
+socat echo TCP-LISTEN:7777,fork &
+DD_DEBUG=1 DD_TCP_KEEPALIVE_TIME=4 DD_TCP_KEEPALIVE_INTVL=5 DD_TCP_KEEPALIVE_PROBES=6 LD_PRELOAD=/usr/lib/libdontdie.so java EchoClient 127.0.0.1 7777
 ```
 
 Log output:
 ```
-Mar  4 00:50:00 thynias java: libdontdie: Initialization
-Mar  4 00:50:00 thynias java: libdontdie: Evaluate environment only once
-Mar  4 00:50:00 thynias java: libdontdie: TCP keepalive is switched on
-Mar  4 00:50:00 thynias java: libdontdie: Set TCP_KEEPALIVE_TIME= [4]
-Mar  4 00:50:00 thynias java: libdontdie: Set TCP_KEEPALIVE_INTVL= [5]
-Mar  4 00:50:00 thynias java: libdontdie: Set TCP_KEEPALIVE_PROBES= [6]
-Mar  4 00:50:00 thynias java: libdontdie: socket() called
-Mar  4 00:50:00 thynias java: libdontdie: domain [AF_INET6]
-Mar  4 00:50:00 thynias java: libdontdie: type [SOCK_STREAM]
-Mar  4 00:50:00 thynias java: libdontdie: type [SOCK_SEQPACKET]
-Mar  4 00:50:00 thynias java: libdontdie: type [SOCK_RAW]
-Mar  4 00:50:00 thynias java: libdontdie: protocol [0]
-Mar  4 00:50:00 thynias java: libdontdie: socket() call returned fd [12]
-Mar  4 00:50:00 thynias java: libdontdie: Parameters check passed
-Mar  4 00:50:00 thynias java: libdontdie: Setting KEEPALIVE for socket
-Mar  4 00:50:00 thynias java: libdontdie: Seting TIME [4]
-Mar  4 00:50:00 thynias java: libdontdie: Seting INTVL [5]
-Mar  4 00:50:00 thynias java: libdontdie: Seting PROBES [6]
-Mar  4 00:50:00 thynias java: libdontdie: Finished; returning to caller [12]
-Mar  4 00:50:00 thynias java: libdontdie: socket() called
-Mar  4 00:50:00 thynias java: libdontdie: domain [AF_INET6]
-Mar  4 00:50:00 thynias java: libdontdie: type [SOCK_STREAM]
-Mar  4 00:50:00 thynias java: libdontdie: type [SOCK_SEQPACKET]
-Mar  4 00:50:00 thynias java: libdontdie: type [SOCK_RAW]
-Mar  4 00:50:00 thynias java: libdontdie: protocol [0]
-Mar  4 00:50:00 thynias java: libdontdie: socket() call returned fd [13]
-Mar  4 00:50:00 thynias java: libdontdie: Parameters check passed
-Mar  4 00:50:00 thynias java: libdontdie: Setting KEEPALIVE for socket
-Mar  4 00:50:00 thynias java: libdontdie: Seting TIME [4]
-Mar  4 00:50:00 thynias java: libdontdie: Seting INTVL [5]
-Mar  4 00:50:00 thynias java: libdontdie: Seting PROBES [6]
-Mar  4 00:50:00 thynias java: libdontdie: Finished; returning to caller [13]
+Mar  4 12:40:20 rs3 java: libdontdie: Initialization
+Mar  4 12:40:20 rs3 java: libdontdie: Evaluate environment only once
+Mar  4 12:40:20 rs3 java: libdontdie: TCP keepalive is switched on
+Mar  4 12:40:20 rs3 java: libdontdie: set TCP_KEEPALIVE_TIME [4]
+Mar  4 12:40:20 rs3 java: libdontdie: set TCP_KEEPALIVE_INTVL [5]
+Mar  4 12:40:20 rs3 java: libdontdie: set TCP_KEEPALIVE_PROBES [6]
+Mar  4 12:40:20 rs3 java: libdontdie: socket() called
+Mar  4 12:40:20 rs3 java: libdontdie: domain [AF_INET6]
+Mar  4 12:40:20 rs3 java: libdontdie: type [SOCK_STREAM]
+Mar  4 12:40:20 rs3 java: libdontdie: type [SOCK_SEQPACKET]
+Mar  4 12:40:20 rs3 java: libdontdie: type [SOCK_RAW]
+Mar  4 12:40:20 rs3 java: libdontdie: protocol [0]
+Mar  4 12:40:20 rs3 java: libdontdie: socket() call returned fd [12]
+Mar  4 12:40:20 rs3 java: libdontdie: Parameters check passed
+Mar  4 12:40:20 rs3 java: libdontdie: Setting KEEPALIVE for socket
+Mar  4 12:40:20 rs3 java: libdontdie: Seting TIME [4]
+Mar  4 12:40:20 rs3 java: libdontdie: Seting INTVL [5]
+Mar  4 12:40:20 rs3 java: libdontdie: Seting PROBES [6]
+Mar  4 12:40:20 rs3 java: libdontdie: Finished; returning to caller [12]
+Mar  4 12:40:20 rs3 java: libdontdie: socket() called
+Mar  4 12:40:20 rs3 java: libdontdie: domain [AF_INET6]
+Mar  4 12:40:20 rs3 java: libdontdie: type [SOCK_STREAM]
+Mar  4 12:40:20 rs3 java: libdontdie: type [SOCK_SEQPACKET]
+Mar  4 12:40:20 rs3 java: libdontdie: type [SOCK_RAW]
+Mar  4 12:40:20 rs3 java: libdontdie: protocol [0]
+Mar  4 12:40:20 rs3 java: libdontdie: socket() call returned fd [13]
+Mar  4 12:40:20 rs3 java: libdontdie: Parameters check passed
+Mar  4 12:40:20 rs3 java: libdontdie: Setting KEEPALIVE for socket
+Mar  4 12:40:20 rs3 java: libdontdie: Seting TIME [4]
+Mar  4 12:40:20 rs3 java: libdontdie: Seting INTVL [5]
+Mar  4 12:40:20 rs3 java: libdontdie: Seting PROBES [6]
+Mar  4 12:40:20 rs3 java: libdontdie: Finished; returning to caller [13]
 ```
 
 TCP Dump output with TCP Keepalives:
 
 ```
-00:50:00.943286 IP 10.0.0.25.39128 > 10.0.0.25.22: Flags [S], seq 1357126392, win 43690, options [mss 65495,sackOK,TS val 110288247 ecr 0,nop,wscale 7], length 0
-00:50:00.943301 IP 10.0.0.25.22 > 10.0.0.25.39128: Flags [S.], seq 2231596575, ack 1357126393, win 43690, options [mss 65495,sackOK,TS val 110288247 ecr 110288247,nop,wscale 7], length 0
-00:50:00.943312 IP 10.0.0.25.39128 > 10.0.0.25.22: Flags [.], ack 1, win 342, options [nop,nop,TS val 110288247 ecr 110288247], length 0
-00:50:00.948144 IP 10.0.0.25.22 > 10.0.0.25.39128: Flags [P.], seq 1:33, ack 1, win 342, options [nop,nop,TS val 110288248 ecr 110288247], length 32
-00:50:00.948154 IP 10.0.0.25.39128 > 10.0.0.25.22: Flags [.], ack 33, win 342, options [nop,nop,TS val 110288248 ecr 110288248], length 0
-00:50:04.945350 IP 10.0.0.25.39128 > 10.0.0.25.22: Flags [.], ack 33, win 342, options [nop,nop,TS val 110289248 ecr 110288248], length 0
-00:50:04.945368 IP 10.0.0.25.22 > 10.0.0.25.39128: Flags [.], ack 1, win 342, options [nop,nop,TS val 110289248 ecr 110288248], length 0
-00:50:09.953337 IP 10.0.0.25.39128 > 10.0.0.25.22: Flags [.], ack 33, win 342, options [nop,nop,TS val 110290500 ecr 110289248], length 0
-00:50:09.953367 IP 10.0.0.25.22 > 10.0.0.25.39128: Flags [.], ack 1, win 342, options [nop,nop,TS val 110290500 ecr 110288248], length 0
-00:50:14.961346 IP 10.0.0.25.39128 > 10.0.0.25.22: Flags [.], ack 33, win 342, options [nop,nop,TS val 110291752 ecr 110290500], length 0
-00:50:14.961359 IP 10.0.0.25.22 > 10.0.0.25.39128: Flags [.], ack 1, win 342, options [nop,nop,TS val 110291752 ecr 110288248], length 0
-00:50:19.969355 IP 10.0.0.25.39128 > 10.0.0.25.22: Flags [.], ack 33, win 342, options [nop,nop,TS val 110293004 ecr 110291752], length 0
-00:50:19.969385 IP 10.0.0.25.22 > 10.0.0.25.39128: Flags [.], ack 1, win 342, options [nop,nop,TS val 110293004 ecr 110288248], length 0
+12:40:20.168088 IP 127.0.0.1.40298 > 127.0.0.1.7777: Flags [S], seq 2760789742, win 43690, options [mss 65495,sackOK,TS val 1204785362 ecr 0,nop,wscale 7], length 0
+12:40:20.168113 IP 127.0.0.1.7777 > 127.0.0.1.40298: Flags [S.], seq 207201762, ack 2760789743, win 43690, options [mss 65495,sackOK,TS val 1204785362 ecr 1204785362,nop,wscale 7], length 0
+12:40:20.168135 IP 127.0.0.1.40298 > 127.0.0.1.7777: Flags [.], ack 1, win 342, options [nop,nop,TS val 1204785362 ecr 1204785362], length 0
+12:40:24.173260 IP 127.0.0.1.40298 > 127.0.0.1.7777: Flags [.], ack 1, win 342, options [nop,nop,TS val 1204786364 ecr 1204785362], length 0
+12:40:24.173348 IP 127.0.0.1.7777 > 127.0.0.1.40298: Flags [.], ack 1, win 342, options [nop,nop,TS val 1204786364 ecr 1204785362], length 0
+12:40:29.181281 IP 127.0.0.1.40298 > 127.0.0.1.7777: Flags [.], ack 1, win 342, options [nop,nop,TS val 1204787616 ecr 1204786364], length 0
+12:40:34.189248 IP 127.0.0.1.40298 > 127.0.0.1.7777: Flags [.], ack 1, win 342, options [nop,nop,TS val 1204788868 ecr 1204786364], length 0
+12:40:39.197282 IP 127.0.0.1.40298 > 127.0.0.1.7777: Flags [.], ack 1, win 342, options [nop,nop,TS val 1204790120 ecr 1204786364], length 0
+12:40:44.205280 IP 127.0.0.1.40298 > 127.0.0.1.7777: Flags [.], ack 1, win 342, options [nop,nop,TS val 1204791372 ecr 1204786364], length 0
+12:40:49.213271 IP 127.0.0.1.40298 > 127.0.0.1.7777: Flags [.], ack 1, win 342, options [nop,nop,TS val 1204792624 ecr 1204786364], length 0
+12:40:54.221254 IP 127.0.0.1.40298 > 127.0.0.1.7777: Flags [.], ack 1, win 342, options [nop,nop,TS val 1204793876 ecr 1204786364], length 0
+12:40:59.229282 IP 127.0.0.1.40298 > 127.0.0.1.7777: Flags [R.], seq 1, ack 1, win 342, options [nop,nop,TS val 1204795128 ecr 1204786364], length 0
+```
+
+Shortly after 12:40:24 the firewall was used to drop all packets to port 7777:
+
+```bash
+iptables -A INPUT -p tcp --destination-port 7777 -j DROP
+```
+
+Every five seconds a keep-alive is sent out and after 6 retries (see
+DD_TCP_KEEPALIVE_PROBES=6), the client connection get into a failed
+state:
+
+```
+Socket exception java.net.SocketException: Connection timed out
 ```
 
 ## Performance

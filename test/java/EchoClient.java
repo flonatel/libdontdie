@@ -1,5 +1,6 @@
 /*
  * Copyright (c) 1995, 2013, Oracle and/or its affiliates. All rights reserved.
+ * Copyright (c) 2015 Andreas Florath
  *
  * Redistribution and use in source and binary forms, with or without
  * modification, are permitted provided that the following conditions
@@ -55,11 +56,20 @@ public class EchoClient {
                 new BufferedReader(
                     new InputStreamReader(System.in))
         ) {
-            String userInput;
-            while ((userInput = stdIn.readLine()) != null) {
-                out.println(userInput);
-                System.out.println("echo: " + in.readLine());
+            echoSocket.setKeepAlive(true);
+          
+            String userInput = "Hallo";
+            while (true) {
+                String inline = in.readLine();
+                if(inline == null) {
+                  System.out.println("EOF from Server");
+                  System.exit(1);
+                }
+                System.out.println("echo: " + inline);
             }
+        } catch (SocketException e) {
+            System.err.println("Socket exception " + e);
+            System.exit(1);
         } catch (UnknownHostException e) {
             System.err.println("Don't know about host " + hostName);
             System.exit(1);
