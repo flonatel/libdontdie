@@ -13,6 +13,6 @@ script:
   - make all
   - make tests
   - echo | dh_make --copyright bsd --email andre@florath.net --single --addmissing --packagename libdontdie_1.0 --createorig
-  - dpkg-buildpackage -us
+  - dpkg-buildpackage -us -uc
   
   
