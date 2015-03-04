@@ -43,8 +43,7 @@ DD_DEBUG=1 DD_TCP_KEEPALIVE_TIME=4 DD_TCP_KEEPALIVE_INTVL=5 DD_TCP_KEEPALIVE_PRO
   that are not specified are used from the system.
 
 ## Example
-In the 'test/java' directory there is a simple echo client.  To
-compile it execute:
+In the 'test/java' directory there is a simple echo client.  Compile:
 
 ```bash
 javac EchoClient.java
@@ -117,7 +116,7 @@ iptables -A INPUT -p tcp --destination-port 7777 -j DROP
 ```
 
 Every five seconds a keep-alive is sent out and after 6 retries (see
-DD_TCP_KEEPALIVE_PROBES=6), the client connection get into a failed
+DD_TCP_KEEPALIVE_PROBES=6), the client connection gets into a failed
 state:
 
 ```
