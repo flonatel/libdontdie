@@ -40,7 +40,8 @@ DD_DEBUG=1 DD_TCP_KEEPALIVE_TIME=4 DD_TCP_KEEPALIVE_INTVL=5 DD_TCP_KEEPALIVE_PRO
   that are not specified are used from the system.
 
 ## Example
-In the java directory there is a simple echo client.  To compile it run
+In the 'test/java' directory there is a simple echo client.  To
+compile it execute:
 
 ```bash
 javac EchoClient.java
@@ -104,5 +105,22 @@ TCP Dump output with TCP Keepalives:
 00:50:14.961359 IP 10.0.0.25.22 > 10.0.0.25.39128: Flags [.], ack 1, win 342, options [nop,nop,TS val 110291752 ecr 110288248], length 0
 00:50:19.969355 IP 10.0.0.25.39128 > 10.0.0.25.22: Flags [.], ack 33, win 342, options [nop,nop,TS val 110293004 ecr 110291752], length 0
 00:50:19.969385 IP 10.0.0.25.22 > 10.0.0.25.39128: Flags [.], ack 1, win 342, options [nop,nop,TS val 110293004 ecr 110288248], length 0
-
 ```
+
+## Performance
+Because the most costly operations are only done once - and not during
+each socket() call - libdontdie is faster than the libkeepalive.
+
+The next table compares runtimes of libdontdie against libkeepalive
+and when none of them are used.
+
+The times are given are the real times as given by the 'time'
+command.  Percents are computed based on the reference 'raw socket' is
+100%.  Performance test was done using Debian 8 system, gcc 4.9.2,
+Intel i5-3570 CPU, 3.40GHz and 16GByte RAM.
+
+raw socket | libdontdie | libkeepalive
+--- | --- | ---
+1:41 | 1:53 | 2:05
+100% | 118% | 124%
+
