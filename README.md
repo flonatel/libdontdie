@@ -42,6 +42,23 @@ DD_DEBUG=1 DD_TCP_KEEPALIVE_TIME=4 DD_TCP_KEEPALIVE_INTVL=5 DD_TCP_KEEPALIVE_PRO
   is not set, tcp keepalive will be switched on.  All other values
   that are not specified are used from the system.
 
+## Compile and Install
+Download the tarbal from the release or checkout from git.
+Only make and some up to data C compiler is needed.
+
+Run:
+```bash
+make
+```
+
+The library will be created in the current directory.  You might want
+to copy it into a global folder (like /usr/lib) or copy it locally
+to your user or project directory.
+
+```bash
+sudo cp libdontdie.so /usr/lib
+```
+
 ## Example
 In the 'test/java' directory there is a simple echo client.  Compile:
 
