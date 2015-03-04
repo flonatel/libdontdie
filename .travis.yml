@@ -11,4 +11,4 @@ before_script:
 
 script:
   - cd src
-  - make
+  - make CC=${CC}
