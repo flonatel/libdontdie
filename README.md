@@ -120,7 +120,8 @@ and when none of them are used.
 The times are given are the real times as given by the 'time'
 command.  Percents are computed based on the reference 'raw socket' is
 100%.  Performance test was done using Debian 8 system, gcc 4.9.2,
-Intel i5-3570 CPU, 3.40GHz and 16GByte RAM.
+Intel i5-3570 CPU, 3.40GHz and 16GByte RAM.  10000000 calls of
+'socket()' were executed.
 
 raw socket | libdontdie | libkeepalive
 --- | --- | ---
