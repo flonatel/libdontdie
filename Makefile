@@ -2,7 +2,8 @@ CC=gcc
 CFLAGS=-fpic -Wall -Wextra -O3
 LDFLAGS=-shared -Wl,-soname,libdontdie.so 
 
-all: libdontdie.so test/Cperformance/perf test/java/EchoClient.class
+all: libdontdie.so
+tests: test/Cperformance/perf test/java/EchoClient.class
 
 libdontdie.so: src/libdontdie.c
 	${CC} ${CFLAGS} -o libdontdie.so src/libdontdie.c ${LDFLAGS} -ldl

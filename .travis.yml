@@ -10,5 +10,6 @@ before_script:
   - sudo apt-get install dh-make
 
 script:
-  - cd src
-  - make CC=${CC}
+  - make all
+  - make tests
+  
