@@ -10,6 +10,11 @@ Files: debian/*
 Copyright: 2015 Andreas Florath <andre@florath.net>
 License: MIT
 
+Files: test/java/EchoClient.java
+Copyright: 1995, 2013, Oracle and/or its affiliates.
+Copyright: 2015 Andreas Florath <andre@florath.net>
+License: MIT
+
 License: MIT
  The MIT License (MIT)
 
