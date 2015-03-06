@@ -1,0 +1,5 @@
+
+* man page
+  `man libdontdie`
+* Unit tests
+* Blackbox tests
