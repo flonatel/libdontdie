@@ -23,7 +23,7 @@ int main(int argc, char *argv[]) {
 
   unsigned long long i;
   for (i = 0; i < loopcnt; ++i) {
-    int const fd = socket(AF_UNIX, SOCK_STREAM, 0);
+    int const fd = socket(AF_INET, SOCK_STREAM, 0);
     if (fd == -1) {
       perror("socket");
       return 1;
