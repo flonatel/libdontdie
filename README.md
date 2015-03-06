@@ -150,11 +150,11 @@ and when none of them are used.
 The times are given are the real times as given by the 'time'
 command.  Percents are computed based on the reference 'raw socket' is
 100%.  Performance test was done using Debian 8 system, gcc 4.9.2,
-Intel i5-3570 CPU, 3.40GHz and 16GByte RAM.  10000000 calls of
+Intel i5-3570 CPU, 3.40GHz and 16GByte RAM.  100000000 calls of
 'socket()' were executed.
 
 raw socket | libdontdie | libkeepalive
 --- | --- | ---
-1:41 | 1:53 | 2:05
-100% | 118% | 124%
+1:51 | 2:31 | 3:16
+100% | 136% | 177%
 
