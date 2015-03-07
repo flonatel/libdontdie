@@ -1,0 +1,125 @@
+.\" 
+.\" Man page for libdontdie
+.\"
+.\" For license, see the 'LICENSE' file.
+.\"
+.TH libdontdie 7 2015-03-07 "TCP keepalive support lib" "TCP keepalive support lib"
+.SH NAME
+libdontdie \- sets TCP KEEP ALIVE parameters when socket(3) is called
+.SH DESCRIPTION
+.B libdontdie
+is a shared library that can be preloaded for existing programs
+to enable TCP keep alive.  Because it's transparent for the program,
+it works with closed source programs as well as with languages that
+natively don't allow changing TCP keep alive settings (e.g. Java).
+.SH BACKGROUND
+A TCP connection stays (in theory) open forever - if it is not
+closed.  Typically connection tracking firewalls which are placed
+between a TCP client and server drop their state when for some time no
+packet was seen for this connection.  In such a scenario both
+endpoints think, that there is a connection, but there is not.
+.P
+The endpoints will get notified about the failure state, when they
+send data and the TCP stack reports the error after the appropriate
+retries and timeouts back to the application.
+.P
+Using a protocol, where the client connects to the server, the server
+will send data, but the client never sends data (e.g. HTTP chunked
+encoding), the client cannot differentiate between a closed connection
+in the firewall and a server that is connected but does not send any
+data.
+.P
+For such kind of scenarios, the TCP stack supports a so called 'TCP
+KEEP ALIVE'.  These are TCP packets that do not contain any data load,
+but should be acknowledged by the other endpoint.  If the
+acknowledgment is not received by the sender, a retry-mechanism is
+used, that sends out some packages within a specific time interval.
+If none of these packages is acknowledged, the TCP stack raises an
+error back to the application.
+.P
+By default the first TCP KEEP ALIVE packet is
+send after two hours.  This is for most scenarios much too long.
+.P
+There is the possibility to configure the TCP KEEP ALIVE parameters
+globally in the Linux kernel (for the whole system).  This might not
+work, if there are some application that want to use different
+timeouts or with missing rights (you have to be root to change these
+parameters).
+.P
+For some languages there is a API that allows to set the appropriate
+parameters (e.g. for C 'setsockopt(2)').  Other languages, like JAVA,
+do not support setting these parameters.
+.P
+.B libdontdie
+can be used for applications that are written in languages that do not
+support setting the TCP KEEP ALIVE parameters.  Also it can be used
+for closed source or commercial applications to enable TCP KEEP
+ALIVE.
+.B libdontdie
+can be used for each program enabling TCP KEEP ALIVE parameter setting
+without changing the source code.  This can be done on a per-instance
+level of an application.  (It is possible to run one Java instance
+with one set of parameters and another Java instance with another set.)
+.SH TCP KEEP ALIVE PARAMETERS
+There are three parameters influencing the TCP KEEP ALIVE behavior.
+The unit of the parameters is 'seconds'.
+.P
+The names are the upper case names of the kernel configuration,
+prepended with 'DD_' for 'libDontDie'.  The appropriate kernel
+parameters can be found in '/proc/sys/net/ipv4/'.
+
+.SS DD_TCP_KEEPALIVE_TIME
+The time between the last TCP data package send and the first TCP KEEP
+ALIVE packet / probe.
+.SS DD_TCP_KEEPALIVE_INTVL
+The interval between two probes.
+.SS DD_TCP_KEEPALIVE_PROBES
+The number of probes send.
+.SH LIBDONTDIE PARAMETERS
+There are two additional parameters, that influence the behavior of
+the
+.B libdontdie:
+.SS DD_DEBUG
+If this is set to '1', each 'socket(2)' call will be logged
+to syslog - including all parameters and actions performed by
+.B libdontdie.
+.SS DD_EVAL_ENVIRONMENT_ONCE
+If this is set to '1' or not specified at all, all parameters are only
+evaluated once during startup.  If this parameter is set to '0', each
+time a socket call is executed, all parameters are evaluated again.
+This makes it possible to change parameters on runtime on socket
+level.  When setting this to '0', there is a bigger per socket(2) call
+overhead therefore the performance will decrease.
+.sp
+.RS
+.nf
+	setenv("DD_TCP_KEEPALIVE_TIME", 60);
+	socket(...):
+	....
+	setenv("DD_TCP_KEEPALIVE_TIME", 180);
+	socket(...):
+.SH USAGE
+All parameters are passed in as environment variables.  The
+.B libdontdie
+itself is preloaded.
+.P
+Example: to run the java program EchoClient with special TCP KEEP
+ALIVE setting, use:
+.sp
+.RS
+.nf
+DD_DEBUG=1 DD_TCP_KEEPALIVE_TIME=4 DD_TCP_KEEPALIVE_INTVL=5 \\ 
+   DD_TCP_KEEPALIVE_PROBES=6 LD_PRELOAD=/usr/lib/libdontdie.so \\ 
+   java EchoClient 127.0.0.1 22
+.SH "SEE ALSO"
+.BR socket(2),
+.BR setsockopt(2)
+.SH HISTORY
+The idea was first implemented in libkeepalive.  Because of some
+limitations regarding functionality and license, the functionality was
+completely rewritten, corrected and extended.
+.SH AUTHOR
+Written by Andreas Florath (andreas@florath.net)
+.SH COPYRIGHT
+Copyright \(co 2015 by Andreas Florath (andreas@florath.net).
+License MIT.
