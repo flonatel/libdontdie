@@ -8,15 +8,15 @@
 libdontdie \- sets TCP KEEP ALIVE parameters when socket(3) is called
 .SH DESCRIPTION
 .B libdontdie
-is a shared library that can be preloaded for existing programs
-to enable TCP keep alive.  Because it's transparent for the program,
+is a shared library that can be preloaded for existing programs to set
+TCP keep alive parameters.  Because it's transparent for the program,
 it works with closed source programs as well as with languages that
 natively don't allow changing TCP keep alive settings (e.g. Java).
 .SH BACKGROUND
 A TCP connection stays (in theory) open forever - if it is not
 closed.  Typically connection tracking firewalls which are placed
 between a TCP client and server drop their state when for some time no
-packet was seen for this connection.  In such a scenario both
+packet was seen for a connection.  In such scenarios both
 endpoints think, that there is a connection, but there is not.
 .P
 The endpoints will get notified about the failure state, when they
@@ -30,8 +30,8 @@ in the firewall and a server that is connected but does not send any
 data.
 .P
 For such kind of scenarios, the TCP stack supports a so called 'TCP
-KEEP ALIVE'.  These are TCP packets that do not contain any data load,
-but should be acknowledged by the other endpoint.  If the
+KEEP ALIVE'.  These are TCP special packets that do not contain any
+data load, but should be acknowledged by the other endpoint.  If the
 acknowledgment is not received by the sender, a retry-mechanism is
 used, that sends out some packages within a specific time interval.
 If none of these packages is acknowledged, the TCP stack raises an
@@ -43,8 +43,8 @@ send after two hours.  This is for most scenarios much too long.
 There is the possibility to configure the TCP KEEP ALIVE parameters
 globally in the Linux kernel (for the whole system).  This might not
 work, if there are some application that want to use different
-timeouts or with missing rights (you have to be root to change these
-parameters).
+timeouts or with missing rights (there is the need to be root to
+change these parameters).
 .P
 For some languages there is a API that allows to set the appropriate
 parameters (e.g. for C 'setsockopt(2)').  Other languages, like JAVA,
@@ -72,9 +72,10 @@ parameters can be found in '/proc/sys/net/ipv4/'.
 The time between the last TCP data package send and the first TCP KEEP
 ALIVE packet / probe.
 .SS DD_TCP_KEEPALIVE_INTVL
-The interval between two probes.
+The interval between two TCP KEEP ALIVE packets / probes.
 .SS DD_TCP_KEEPALIVE_PROBES
-The number of probes send.
+The number of probes send before an error is raised in the
+application. 
 .SH LIBDONTDIE PARAMETERS
 There are two additional parameters, that influence the behavior of
 the
@@ -87,17 +88,21 @@ to syslog - including all parameters and actions performed by
 If this is set to '1' or not specified at all, all parameters are only
 evaluated once during startup.  If this parameter is set to '0', each
 time a socket call is executed, all parameters are evaluated again.
-This makes it possible to change parameters on runtime on socket
-level.  When setting this to '0', there is a bigger per socket(2) call
-overhead therefore the performance will decrease.
+This makes it possible to change parameters at runtime.  When setting
+this to '0', there is a bigger per socket call overhead therefore
+the performance will decrease.
+.P
+In languages that do not support setting the TCP KEEP ALIVE
+parameters, this is a workaround to enable different setting for
+different sockets.
 .sp
 .RS
 .nf
 	setenv("DD_TCP_KEEPALIVE_TIME", 60);
-	socket(...):
+	socket(...);
 	....
 	setenv("DD_TCP_KEEPALIVE_TIME", 180);
-	socket(...):
+	socket(...);
 .SH USAGE
 All parameters are passed in as environment variables.  The
 .B libdontdie
@@ -115,9 +120,9 @@ DD_DEBUG=1 DD_TCP_KEEPALIVE_TIME=4 DD_TCP_KEEPALIVE_INTVL=5 \\
 .BR socket(2),
 .BR setsockopt(2)
 .SH HISTORY
-The idea was first implemented in libkeepalive.  Because of some
-limitations regarding functionality and license, the functionality was
-completely rewritten, corrected and extended.
+The idea was first implemented in libkeepalive by Fabio Busatto.
+Because of some limitations regarding functionality and license, it
+was completely rewritten, corrected and extended.
 .SH AUTHOR
 Written by Andreas Florath (andreas@florath.net)
 .SH COPYRIGHT
