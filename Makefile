@@ -2,11 +2,19 @@ CC=gcc
 CFLAGS=-fpic -Wall -Wextra -O3
 LDFLAGS=-shared -Wl,-soname,libdontdie.so 
 
-all: libdontdie.so
-tests: test/Cperformance/perf test/java/EchoClient.class
+all: libdontdie.so test/Cblackbox/tcp_server
+
+.PHONY: check
+check:
+	echo "nox"
+
+testapps: test/Cperformance/perf test/java/EchoClient.class
 
 libdontdie.so: src/libdontdie.c
 	${CC} ${CFLAGS} -o libdontdie.so src/libdontdie.c ${LDFLAGS} -ldl
+
+test/Cblackbox/tcp_server: test/Cblackbox/tcp_server.c
+	${CC} ${CFLAGS} -o test/Cblackbox/tcp_server test/Cblackbox/tcp_server.c
 
 test/Cperformance/perf: test/Cperformance/perf.c
 	${CC} ${CFLAGS} -o test/Cperformance/perf test/Cperformance/perf.c
