@@ -1,5 +1,6 @@
 # libdontdie
-library that sets TCP KEEP ALIVE parameters when socket(3) is called
+a library that can be pre-loaded and that sets the TCP KEEP-ALIVE flag
+whenever `socket(2)' is called
 
 [![Build
 Status](https://secure.travis-ci.org/flonatel/libdontdie.png)](http://travis-ci.org/flonatel/pipexec)
@@ -9,18 +10,19 @@ This is a complete rewrite of the <a
 href="http://libkeepalive.sourceforge.net">libkeepalive</a>.
 
 The main reason for the rewrite was the license of libkeepalive (GPL -
-without exceptions) which is always something clowdy for a library.
+without exceptions) which is always a grey area for a library.
 
 The other reason was, that the libkeepalive does not work with Java -
 because of a bug.
 
-So instead of messing around with source code that comes with a
-strange license, I started over.
-
 ## Usage
+The library is developed for Linux.  The commands given must be
+entered in a shell.
 
 ```bash
-DD_DEBUG=1 DD_TCP_KEEPALIVE_TIME=4 DD_TCP_KEEPALIVE_INTVL=5 DD_TCP_KEEPALIVE_PROBES=6 LD_PRELOAD=/usr/lib/libdontdie.so java EchoClient 127.0.0.1 22
+DD_DEBUG=1 DD_TCP_KEEPALIVE_TIME=4 DD_TCP_KEEPALIVE_INTVL=5 \
+  DD_TCP_KEEPALIVE_PROBES=6 LD_PRELOAD=/usr/lib/libdontdie.so \
+  java EchoClient 127.0.0.1 22
 ```
 
 * DD_DEBUG: if set to 1, it prints each call of socket - including the
@@ -43,7 +45,7 @@ DD_DEBUG=1 DD_TCP_KEEPALIVE_TIME=4 DD_TCP_KEEPALIVE_INTVL=5 DD_TCP_KEEPALIVE_PRO
   that are not specified are used from the system.
 
 ## Compile and Install
-Download the tarbal from the release or checkout from git.
+Download the tarball from the release or checkout from git.
 Only make and some up to data C compiler is needed.
 
 Run:

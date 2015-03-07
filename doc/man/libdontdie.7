@@ -5,80 +5,78 @@
 .\"
 .TH libdontdie 7 2015-03-07 "TCP keepalive support lib" "TCP keepalive support lib"
 .SH NAME
-libdontdie \- sets TCP KEEP ALIVE parameters when socket(3) is called
+libdontdie \- a library that sets the TCP keep-alive flag when
+applications call socket(2)
 .SH DESCRIPTION
 .B libdontdie
-is a shared library that can be preloaded for existing programs to set
-TCP keep alive parameters.  Because it's transparent for the program,
-it works with closed source programs as well as with languages that
-natively don't allow changing TCP keep alive settings (e.g. Java).
+is a shared library that can be injected into any
+application with the LD_PRELOAD mechanism. It is completely
+transparent to the application and therefore works equally well with
+closed-source programs and with languages like Java that do not
+natively allow changing the TCP keep-alive parameters. 
 .SH BACKGROUND
-A TCP connection stays (in theory) open forever - if it is not
-closed.  Typically connection tracking firewalls which are placed
-between a TCP client and server drop their state when for some time no
-packet was seen for a connection.  In such scenarios both
-endpoints think, that there is a connection, but there is not.
+In theory, a TCP connection that is not explicitly closed remains open
+forever.  In practice, this does not work out when connection-tracking
+firewalls along the way drop their state, and all further traffic, for
+a connection that was idle for a certain time.  The result is that
+both the TCP client and server believe the connection to be open but
+the firewall inhibits all further communication.
 .P
-The endpoints will get notified about the failure state, when they
-send data and the TCP stack reports the error after the appropriate
-retries and timeouts back to the application.
+This kind of connection failure will be reported to the participating
+applications only after they attempt to send further data and all TCP
+timeouts and retransmits expire.
 .P
-Using a protocol, where the client connects to the server, the server
-will send data, but the client never sends data (e.g. HTTP chunked
-encoding), the client cannot differentiate between a closed connection
-in the firewall and a server that is connected but does not send any
-data.
+In situation where only one of the communication partners ever sends
+anything, e.g. the client waiting for HTTP chunked data, it can be
+impossible to distinguish between a connection closed by a firewall
+and connected-but-idle.
 .P
-For such kind of scenarios, the TCP stack supports a so called 'TCP
-KEEP ALIVE'.  These are TCP special packets that do not contain any
-data load, but should be acknowledged by the other endpoint.  If the
-acknowledgment is not received by the sender, a retry-mechanism is
-used, that sends out some packages within a specific time interval.
-If none of these packages is acknowledged, the TCP stack raises an
-error back to the application.
+To handle and/or prevent this kind of situation, TCP has a keep-alive
+mechanism.  It consists of TCP packets sent periodically over an
+otherwise idle connection to "refresh" the associated state along the
+whole path.  If not acknowledged the same retry-mechanism is used as
+for regular data packets, however independent of whether there is any
+data to send. Finally all unanswered keep-alive packets leads to a TCP
+error that can be detected by the application. 
 .P
 By default the first TCP KEEP ALIVE packet is
-send after two hours.  This is for most scenarios much too long.
+send after two hours, which is too long for most scenarios.
 .P
-There is the possibility to configure the TCP KEEP ALIVE parameters
-globally in the Linux kernel (for the whole system).  This might not
-work, if there are some application that want to use different
-timeouts or with missing rights (there is the need to be root to
-change these parameters).
+The Linux kernel offers the possibility to change the TCP keep-alive
+timeout globally for the whole system.  However this solution requires
+root privileges and does not work when different applications require
+different timeouts on the same machine.
 .P
-For some languages there is a API that allows to set the appropriate
-parameters (e.g. for C 'setsockopt(2)').  Other languages, like JAVA,
-do not support setting these parameters.
+In some programming languages an appropriate API call can be used to
+enable TCP keep-alive (e.g. setsockopt(2) in C).  Other languages like
+Java do not support changing these parameters.
 .P
 .B libdontdie
 can be used for applications that are written in languages that do not
-support setting the TCP KEEP ALIVE parameters.  Also it can be used
-for closed source or commercial applications to enable TCP KEEP
-ALIVE.
+support setting the TCP KEEP ALIVE parameters.  It can also be used to
+enable TCP keep-alive for closed-source or commercial applications.
 .B libdontdie
-can be used for each program enabling TCP KEEP ALIVE parameter setting
-without changing the source code.  This can be done on a per-instance
-level of an application.  (It is possible to run one Java instance
-with one set of parameters and another Java instance with another set.)
+can be used on a case-by-case basis, selectively enabling
+TCP keep-alive for some application instances without changing any
+source code. All parameters are passed to libdontdie in the form of
+environment variables. 
 .SH TCP KEEP ALIVE PARAMETERS
-There are three parameters influencing the TCP KEEP ALIVE behavior.
-The unit of the parameters is 'seconds'.
+Three parameters are used to change the TCP keep-alive behaviour. All
+parameters are in seconds.
 .P
-The names are the upper case names of the kernel configuration,
-prepended with 'DD_' for 'libDontDie'.  The appropriate kernel
-parameters can be found in '/proc/sys/net/ipv4/'.
-
+The variable names are taken from the Linux kernel configuration with
+a 'DD_' prefix for 'libDontDie'. The corresponding kernel parameters
+can be found in '/proc/sys/net/ipv4/'. 
 .SS DD_TCP_KEEPALIVE_TIME
-The time between the last TCP data package send and the first TCP KEEP
+The time between the last TCP data packet sent and the first TCP KEEP
 ALIVE packet / probe.
 .SS DD_TCP_KEEPALIVE_INTVL
 The interval between two TCP KEEP ALIVE packets / probes.
 .SS DD_TCP_KEEPALIVE_PROBES
-The number of probes send before an error is raised in the
-application. 
+The number of keep-alive probes sent before the socket enters an error
+state.
 .SH LIBDONTDIE PARAMETERS
-There are two additional parameters, that influence the behavior of
-the
+Two additional parameters change the behaviour of libdontdie itself:
 .B libdontdie:
 .SS DD_DEBUG
 If this is set to '1', each 'socket(2)' call will be logged
