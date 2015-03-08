@@ -142,6 +142,16 @@ state:
 Socket exception java.net.SocketException: Connection timed out
 ```
 
+## Testing
+There are some test programs in the test directory.  They can be used
+for manual tests.
+
+There are currently no automatic test available.  There are two
+methods to test this library automatically:
+
+1. Using raw sockets: a big, big overhead
+2. Using a firewall / iptables: root permissions needed.
+
 ## Performance
 Because the most costly operations are only done once - and not during
 each socket() call - libdontdie is faster than the libkeepalive.

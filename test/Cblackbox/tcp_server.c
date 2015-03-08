@@ -4,6 +4,8 @@
 #include <sys/socket.h>
 #include <strings.h>
 #include <netinet/in.h>
+#include <unistd.h>
+#include <string.h>
 
 struct sockaddr_in serv_addr;
 struct sockaddr_in cli_addr;
@@ -56,18 +58,45 @@ int main() {
       break;
     }
     switch (c) {
-    case 'O': {
+    case 'o': {
       struct sockaddr_in loc_serv_addr;
       socklen_t addrlen = sizeof(loc_serv_addr);
       server_socket = open_socket();
       getsockname(server_socket, (struct sockaddr *)&loc_serv_addr, &addrlen);
       printf("%d\n", ntohs(loc_serv_addr.sin_port));
     } break;
-    case 'A': {
+    case 'a': {
       accepted_socket = listen_and_accept(server_socket);
       printf("1\n");
     } break;
-    case 'P':
+    case 'r': {
+      char buffer[256];
+      bzero(buffer, 256);
+      int const n = read(accepted_socket, buffer, 255);
+      if (n < 0) {
+        perror("ERROR reading from socket");
+        exit(1);
+      }
+      printf("%s\n", buffer);
+    } break;
+    case 'w': {
+      char text[256];
+      char const *fs = fgets(text, 256, stdin);
+      if (fs == 0) {
+        perror("text");
+        exit(1);
+      }
+      size_t const cnt = strlen(text) - 1;
+      ssize_t const w = write(accepted_socket, text, cnt);
+      if (w == -1) {
+        perror("write");
+        exit(1);
+      }
+    } break;
+    case 'l': {
+       close(accepted_socket);
+    } break;
+    case 'p':
       printf("pong\n");
       break;
     case '\n':
