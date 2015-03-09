@@ -1,0 +1,14 @@
+
+Colin Hirsch:
+   help with the documentation
+
+Michael Wins <michael.wins@gmx.de>:
+   code review of version 1.0.0
+
+Thorsten Alteholz:
+   patch for makefile: hardening
+
+
+Thanks to all for your help!
+
+Andreas Florath
