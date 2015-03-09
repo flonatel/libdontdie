@@ -1,7 +1,7 @@
 *~
 test/java/EchoClient.class
 test/Cperformance/perf
-libdontdie.so
+libdontdie.so*
 test/Cblackbox/tcp_client
 test/Cblackbox/tcp_server
 libdontdie-*.tar.xz
