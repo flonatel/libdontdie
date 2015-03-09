@@ -101,10 +101,31 @@ different sockets.
 	....
 	setenv("DD_TCP_KEEPALIVE_TIME", 180);
 	socket(...);
+.SH INSTALLATION LOCATION
+Depending on the installation method or the distribution, the
+installation directory of
+.B libdontdie
+might differ.
+.P
+One way to get the installation directory is using the packet manager
+to list all files of the packet (like 'dpkg -L <package_name>').
+.P
+Typically the library is installed in a directory under /usr/lib,
+/usr/lib64, or /usr/lib/<triple>.  A typical triple
+is 'x86_64-linux-gnu'.  Under Debian it is possible to get
+the triple with the command
+.sp
+.RS
+.nf
+	dpkg-architecture -qDEB_HOST_GNU_TYPE
 .SH USAGE
 All parameters are passed in as environment variables.  The
 .B libdontdie
 itself is preloaded.
+.P
+The example assumes, that the library is installed
+under '/usr/lib/libdontdie.so'.  This might be replaced by the real
+installation path.
 .P
 Example: to run the java program EchoClient with special TCP KEEP
 ALIVE setting, use:
