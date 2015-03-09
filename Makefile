@@ -28,4 +28,5 @@ test/java/EchoClient.class: test/java/EchoClient.java
 
 .PHONY: clean
 clean:
-	rm -f libdontdie.so* test/Cperformance/perf test/java/EchoClient.class
+	rm -f libdontdie.so* test/Cperformance/perf test/java/EchoClient.class \
+	   test/Cblackbox/tcp_server test/Cblackbox/tcp_client
