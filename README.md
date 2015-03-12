@@ -3,7 +3,7 @@ a library that can be pre-loaded and that sets the TCP KEEP-ALIVE flag
 whenever `socket(2)' is called
 
 [![Build
-Status](https://secure.travis-ci.org/flonatel/libdontdie.png)](http://travis-ci.org/flonatel/pipexec)
+Status](https://secure.travis-ci.org/flonatel/libdontdie.png)](http://travis-ci.org/flonatel/libdontdie)
 
 ## Introduction
 This is a complete rewrite of the <a
