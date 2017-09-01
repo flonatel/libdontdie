@@ -72,7 +72,7 @@ static void eval_environment() {
 __attribute__((constructor)) void libdontdie_init() {
   eval_environment();
 
-  // Cast it: accoring to the man page this construct must be used:
+  // Cast it: according to the man page this construct must be used:
   *(void **)(&socket_call_clib) = dlsym(RTLD_NEXT, "socket");
   if (socket_call_clib == NULL) {
     LOG("No dynamic symbol with name 'socket' found [%m]");
