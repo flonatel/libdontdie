@@ -24,6 +24,7 @@ int eval_environment_once = 0;
 int tcp_keepalive_time = -1;
 int tcp_keepalive_intvl = -1;
 int tcp_keepalive_probes = -1;
+int tcp_user_timeout = -1;
 
 static void eval_environment() {
   if (eval_environment_once) {
@@ -54,17 +55,20 @@ static void eval_environment() {
     LOG("TCP keepalive is switched on");
   }
 
-#define EVAL_ENV(ltype, strtype)                                               \
-  char const *const str_tcp_keepalive_##ltype =                                \
-      getenv("DD_TCP_KEEPALIVE_" strtype);                                     \
-  if (str_tcp_keepalive_##ltype != NULL) {                                     \
-    tcp_keepalive_##ltype = atoi(str_tcp_keepalive_##ltype);                   \
-    LOG("set TCP_KEEPALIVE_" strtype " [%d]", tcp_keepalive_##ltype);         \
+#define EVAL_ENV(ltype, strtype)                           \
+  char const *const str_tcp_##ltype =                      \
+      getenv("DD_TCP_" strtype);                           \
+  if (str_tcp_##ltype != NULL) {                           \
+    tcp_##ltype = atoi(str_tcp_##ltype);                   \
+    LOG("set TCP_" strtype " [%d]", tcp_##ltype);          \
   }
 
-  EVAL_ENV(time, "TIME");
-  EVAL_ENV(intvl, "INTVL");
-  EVAL_ENV(probes, "PROBES");
+  EVAL_ENV(keepalive_time, "KEEPALIVE_TIME");
+  EVAL_ENV(keepalive_intvl, "KEEPALIVE_INTVL");
+  EVAL_ENV(keepalive_probes, "KEEPALIVE_PROBES");
+#if defined(TCP_USER_TIMEOUT)
+  EVAL_ENV(user_timeout, "USER_TIMEOUT");
+#endif
 
 #undef EVAL_ENV
 }
@@ -188,20 +192,23 @@ int socket(int domain, int type, int protocol) {
     return socket_fd;
   }
 
-#define SET_SOCK_OPT(ltype, strtype, tcp_type)                                 \
-  if (tcp_keepalive_##ltype >= 0) {                                            \
-    LOG("Seting " strtype " [%d]", tcp_keepalive_##ltype);                     \
-    int const ssopt =                                                          \
-        setsockopt(socket_fd, SOL_TCP, tcp_type, &tcp_keepalive_##ltype,       \
-                   sizeof(tcp_keepalive_##ltype));                             \
-    if (ssopt == -1) {                                                         \
-      LOG("Setting " strtype " returned error [%m]");                          \
-    }                                                                          \
+#define SET_SOCK_OPT(ltype, strtype, tcp_type)                       \
+  if (tcp_##ltype >= 0) {                                            \
+    LOG("Seting " strtype " [%d]", tcp_##ltype);                     \
+    int const ssopt =                                                \
+        setsockopt(socket_fd, SOL_TCP, tcp_type, &tcp_##ltype,       \
+                   sizeof(tcp_##ltype));                             \
+    if (ssopt == -1) {                                               \
+      LOG("Setting " strtype " returned error [%m]");                \
+    }                                                                \
   }
 
-  SET_SOCK_OPT(time, "TIME", TCP_KEEPIDLE);
-  SET_SOCK_OPT(intvl, "INTVL", TCP_KEEPINTVL);
-  SET_SOCK_OPT(probes, "PROBES", TCP_KEEPCNT);
+  SET_SOCK_OPT(keepalive_time, "KEEPALIVE_TIME", TCP_KEEPIDLE);
+  SET_SOCK_OPT(keepalive_intvl, "KEEPALIVE_INTVL", TCP_KEEPINTVL);
+  SET_SOCK_OPT(keepalive_probes, "KEEPALIVE_PROBES", TCP_KEEPCNT);
+#if defined(TCP_USER_TIMEOUT)
+  SET_SOCK_OPT(user_timeout, "USER_TIMEOUT", TCP_USER_TIMEOUT);
+#endif
 
 #undef SET_SOCK_OPT
 
